@@ -1,0 +1,1248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trucking Company Compliance Manager</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        nav {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 20px;
+            overflow-x: auto;
+        }
+
+        nav button {
+            padding: 12px 25px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 2px solid white;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+
+        nav button:hover, nav button.active {
+            background: white;
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        section {
+            display: none;
+        }
+
+        section.active {
+            display: block;
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #667eea;
+        }
+
+        h3 {
+            color: #667eea;
+            margin: 20px 0 10px 0;
+        }
+
+        form {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1em;
+            font-family: inherit;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 5px rgba(102, 126, 234, 0.3);
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: transform 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: white;
+            font-size: 0.9em;
+        }
+
+        th {
+            background: #667eea;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: bold;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+
+        .editable {
+            cursor: pointer;
+            min-width: 100px;
+        }
+
+        .editable:hover {
+            background: #fff3cd;
+            border-radius: 3px;
+        }
+
+        .edit-input {
+            width: 100%;
+            padding: 6px;
+            border: 2px solid #667eea;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border-left: 4px solid #155724;
+        }
+
+        .alert-danger {
+            background: #f8d7da;
+            color: #721c24;
+            border-left: 4px solid #721c24;
+        }
+
+        .alert-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border-left: 4px solid #0c5460;
+        }
+
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .three-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .two-column, .three-column {
+                grid-template-columns: 1fr;
+            }
+            
+            table {
+                font-size: 0.8em;
+            }
+            
+            th, td {
+                padding: 8px;
+            }
+        }
+
+        .action-btn {
+            padding: 6px 12px;
+            margin: 2px;
+            font-size: 0.85em;
+        }
+
+        .delete-btn {
+            background: #dc3545;
+        }
+
+        .delete-btn:hover {
+            background: #c82333;
+        }
+
+        .coi-extracted {
+            background: #e7f3ff;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .coi-section {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: white;
+            border-radius: 5px;
+            border-left: 4px solid #667eea;
+        }
+
+        .coi-section h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .coi-field {
+            margin-bottom: 10px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .coi-field label {
+            margin: 0;
+            min-width: 120px;
+            font-weight: bold;
+        }
+
+        .coi-field input {
+            margin: 0;
+            flex: 1;
+        }
+
+        .autofill-btn {
+            background: #28a745;
+            padding: 12px 40px;
+            font-size: 1.1em;
+            margin-top: 20px;
+        }
+
+        .autofill-btn:hover {
+            background: #218838;
+        }
+
+        .loading {
+            color: #667eea;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🚛 Trucking Company Compliance Manager</h1>
+            <p>Manage your fleet with editable spreadsheets & auto-fill COI</p>
+            <nav>
+                <button onclick="showSection('dashboard')" class="nav-btn active">Dashboard</button>
+                <button onclick="showSection('coi')" class="nav-btn">📄 Auto-Fill COI</button>
+                <button onclick="showSection('companies')" class="nav-btn">Companies</button>
+                <button onclick="showSection('drivers')" class="nav-btn">Drivers</button>
+                <button onclick="showSection('vehicles')" class="nav-btn">Vehicles</button>
+                <button onclick="showSection('insurance')" class="nav-btn">Insurance</button>
+                <button onclick="showSection('documents')" class="nav-btn">Documents</button>
+                <button onclick="showSection('reports')" class="nav-btn">Reports</button>
+            </nav>
+        </header>
+
+        <div class="content">
+            <!-- Dashboard Section -->
+            <section id="dashboard" class="active">
+                <h2>Dashboard</h2>
+                <div id="dashboard-content"></div>
+            </section>
+
+            <!-- COI Auto-Fill Section -->
+            <section id="coi">
+                <h2>📄 Upload Certificate of Insurance (Auto-Fill)</h2>
+                <p style="margin-bottom: 20px; color: #666;">Upload a Certificate of Insurance PDF and we'll automatically extract all the information and help you fill your forms!</p>
+                
+                <form onsubmit="parseCOI(event)" enctype="multipart/form-data">
+                    <h3>Upload COI PDF</h3>
+                    <div class="form-group">
+                        <label>Select PDF File *</label>
+                        <input type="file" id="coi-file" accept=".pdf" required>
+                    </div>
+                    <button type="submit">🔍 Parse COI & Extract Data</button>
+                </form>
+
+                <div id="coi-results"></div>
+            </section>
+
+            <!-- Companies Section -->
+            <section id="companies">
+                <h2>Manage Companies</h2>
+                <form onsubmit="addCompany(event)">
+                    <h3>Add New Company</h3>
+                    <div class="three-column">
+                        <div class="form-group">
+                            <label>Company Name *</label>
+                            <input type="text" id="company-name" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Owner Name</label>
+                            <input type="text" id="company-owner">
+                        </div>
+                        <div class="form-group">
+                            <label>DOT Number</label>
+                            <input type="text" id="company-dot">
+                        </div>
+                    </div>
+                    <div class="three-column">
+                        <div class="form-group">
+                            <label>MC Number</label>
+                            <input type="text" id="company-mc">
+                        </div>
+                        <div class="form-group">
+                            <label>EIN Number</label>
+                            <input type="text" id="company-ein">
+                        </div>
+                        <div class="form-group">
+                            <label>Phone</label>
+                            <input type="tel" id="company-phone">
+                        </div>
+                    </div>
+                    <div class="two-column">
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" id="company-email">
+                        </div>
+                        <div class="form-group">
+                            <label>Address</label>
+                            <textarea id="company-address" rows="2"></textarea>
+                        </div>
+                    </div>
+                    <button type="submit">Add Company</button>
+                </form>
+
+                <h3>All Companies (Click cells to edit)</h3>
+                <table id="companies-table">
+                    <thead>
+                        <tr>
+                            <th>Company Name</th>
+                            <th>Owner</th>
+                            <th>DOT #</th>
+                            <th>MC #</th>
+                            <th>EIN #</th>
+                            <th>Phone</th>
+                            <th>Email</th>
+                            <th>Address</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </section>
+
+            <!-- Drivers Section -->
+            <section id="drivers">
+                <h2>Manage Drivers</h2>
+                <form onsubmit="addDriver(event)">
+                    <h3>Add New Driver</h3>
+                    <div class="form-group">
+                        <label>Select Company *</label>
+                        <select id="driver-company" required>
+                            <option value="">Choose a company...</option>
+                        </select>
+                    </div>
+                    <div class="three-column">
+                        <div class="form-group">
+                            <label>First Name *</label>
+                            <input type="text" id="driver-first" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Last Name *</label>
+                            <input type="text" id="driver-last" required>
+                        </div>
+                        <div class="form-group">
+                            <label>License Number</label>
+                            <input type="text" id="driver-license">
+                        </div>
+                    </div>
+                    <div class="three-column">
+                        <div class="form-group">
+                            <label>License Expiration</label>
+                            <input type="date" id="driver-license-exp">
+                        </div>
+                        <div class="form-group">
+                            <label>Phone</label>
+                            <input type="tel" id="driver-phone">
+                        </div>
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" id="driver-email">
+                        </div>
+                    </div>
+                    <div class="two-column">
+                        <div class="form-group">
+                            <label>Address</label>
+                            <textarea id="driver-address" rows="2"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Personal Info</label>
+                            <textarea id="driver-personal" rows="2"></textarea>
+                        </div>
+                    </div>
+                    <div class="two-column">
+                        <div class="form-group">
+                            <label>Call Status</label>
+                            <select id="driver-call-status">
+                                <option value="Active">Active</option>
+                                <option value="Inactive">Inactive</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Call Expiration</label>
+                            <input type="date" id="driver-call-exp">
+                        </div>
+                    </div>
+                    <button type="submit">Add Driver</button>
+                </form>
+
+                <h3>All Drivers (Click cells to edit)</h3>
+                <table id="drivers-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>License #</th>
+                            <th>License Exp</th>
+                            <th>Phone</th>
+                            <th>Email</th>
+                            <th>Address</th>
+                            <th>Call Status</th>
+                            <th>Call Exp</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </section>
+
+            <!-- Vehicles Section -->
+            <section id="vehicles">
+                <h2>Manage Vehicles</h2>
+                <form onsubmit="addVehicle(event)">
+                    <h3>Add New Vehicle</h3>
+                    <div class="form-group">
+                        <label>Select Company *</label>
+                        <select id="vehicle-company" required>
+                            <option value="">Choose a company...</option>
+                        </select>
+                    </div>
+                    <div class="three-column">
+                        <div class="form-group">
+                            <label>VIN Number *</label>
+                            <input type="text" id="vehicle-vin" required>
+                        </div>
+                        <div class="form-group">
+                            <label>License Plate</label>
+                            <input type="text" id="vehicle-plate">
+                        </div>
+                        <div class="form-group">
+                            <label>Vehicle Type</label>
+                            <input type="text" id="vehicle-type" placeholder="e.g., Tractor, Trailer">
+                        </div>
+                    </div>
+                    <button type="submit">Add Vehicle</button>
+                </form>
+
+                <h3>All Vehicles (Click cells to edit)</h3>
+                <table id="vehicles-table">
+                    <thead>
+                        <tr>
+                            <th>VIN Number</th>
+                            <th>License Plate</th>
+                            <th>Vehicle Type</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </section>
+
+            <!-- Insurance Section -->
+            <section id="insurance">
+                <h2>Manage Insurance</h2>
+                <form onsubmit="addInsurance(event)">
+                    <h3>Add Insurance Policy</h3>
+                    <div class="form-group">
+                        <label>Select Company *</label>
+                        <select id="insurance-company" required>
+                            <option value="">Choose a company...</option>
+                        </select>
+                    </div>
+                    <div class="three-column">
+                        <div class="form-group">
+                            <label>Policy Number</label>
+                            <input type="text" id="insurance-policy">
+                        </div>
+                        <div class="form-group">
+                            <label>Coverage Type</label>
+                            <input type="text" id="insurance-type" placeholder="e.g., General Liability">
+                        </div>
+                        <div class="form-group">
+                            <label>Expiration Date *</label>
+                            <input type="date" id="insurance-exp" required>
+                        </div>
+                    </div>
+                    <button type="submit">Add Insurance Policy</button>
+                </form>
+
+                <h3>All Insurance Policies</h3>
+                <table id="insurance-table">
+                    <thead>
+                        <tr>
+                            <th>Company</th>
+                            <th>Policy Number</th>
+                            <th>Coverage Type</th>
+                            <th>Expiration</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </section>
+
+            <!-- Documents Section -->
+            <section id="documents">
+                <h2>Upload Documents</h2>
+                <form onsubmit="uploadDocument(event)" enctype="multipart/form-data">
+                    <h3>Upload PDF Document</h3>
+                    <div class="three-column">
+                        <div class="form-group">
+                            <label>Document Type *</label>
+                            <select id="doc-type" required>
+                                <option value="">Select type...</option>
+                                <option value="Driver License">Driver License</option>
+                                <option value="Insurance Certificate">Insurance Certificate</option>
+                                <option value="Medical Certificate">Medical Certificate</option>
+                                <option value="Vehicle Inspection">Vehicle Inspection</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Related To *</label>
+                            <select id="doc-related-type" onchange="updateDocDropdown()">
+                                <option value="company">Company</option>
+                                <option value="driver">Driver</option>
+                                <option value="vehicle">Vehicle</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Select Item *</label>
+                            <select id="doc-related-id" required></select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>PDF File *</label>
+                        <input type="file" id="doc-file" accept=".pdf" required>
+                    </div>
+                    <button type="submit">Upload Document</button>
+                </form>
+
+                <h3>All Documents</h3>
+                <table id="documents-table">
+                    <thead>
+                        <tr>
+                            <th>Document Type</th>
+                            <th>File</th>
+                            <th>Uploaded</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </section>
+
+            <!-- Reports Section -->
+            <section id="reports">
+                <h2>Compliance Reports</h2>
+                <button onclick="generateWeeklyReport()" style="margin-bottom: 20px;">📊 Generate Weekly Report</button>
+                
+                <div id="report-content"></div>
+            </section>
+        </div>
+    </div>
+
+    <script>
+        let coiExtractedData = {};
+
+        function showSection(sectionId) {
+            document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
+            document.getElementById(sectionId).classList.add('active');
+            
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            if (sectionId === 'companies') { loadCompanies(); }
+            if (sectionId === 'drivers') { loadCompanies(); loadDrivers(); }
+            if (sectionId === 'vehicles') { loadCompanies(); loadVehicles(); }
+            if (sectionId === 'insurance') { loadCompanies(); loadInsurance(); }
+            if (sectionId === 'dashboard') { loadDashboard(); }
+            if (sectionId === 'documents') { loadCompanies(); loadDrivers(); loadVehicles(); updateDocDropdown(); loadDocumentsList(); }
+        }
+
+        async function parseCOI(event) {
+            event.preventDefault();
+            
+            const fileInput = document.getElementById('coi-file');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                alert('Please select a PDF file');
+                return;
+            }
+            
+            const formData = new FormData();
+            formData.append('file', file);
+            
+            const resultsDiv = document.getElementById('coi-results');
+            resultsDiv.innerHTML = '<p class="loading">🔍 Analyzing PDF... This may take a moment...</p>';
+            
+            try {
+                const response = await fetch('/api/parse-coi', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (data.error) {
+                    resultsDiv.innerHTML = `<div class="alert alert-danger">Error parsing PDF: ${data.error}</div>`;
+                    return;
+                }
+                
+                coiExtractedData = data;
+                displayCOIResults(data);
+                
+            } catch (error) {
+                resultsDiv.innerHTML = `<div class="alert alert-danger">Error: ${error.message}</div>`;
+            }
+        }
+
+        function displayCOIResults(data) {
+            let html = '<div class="coi-extracted">';
+            html += '<h3>✅ Successfully Extracted Information from COI</h3>';
+            html += '<p style="color: #666; margin-bottom: 20px;">Review the extracted data below and make any corrections before auto-filling the forms.</p>';
+            
+            // Insurance Section
+            if (data.insurance && Object.keys(data.insurance).length > 0) {
+                html += '<div class="coi-section"><h4>💼 Insurance Information</h4>';
+                html += '<div class="coi-field">';
+                html += '<label>Policy #:</label>';
+                html += `<input type="text" id="coi-policy" value="${data.insurance.policy_number || ''}">`;
+                html += '</div>';
+                html += '<div class="coi-field">';
+                html += '<label>Expiration:</label>';
+                html += `<input type="date" id="coi-exp" value="${data.insurance.expiration_date || ''}">`;
+                html += '</div>';
+                html += '<div class="coi-field">';
+                html += '<label>Coverage Type:</label>';
+                html += `<input type="text" id="coi-coverage" value="${data.insurance.coverage_type || ''}">`;
+                html += '</div>';
+                html += '</div>';
+            }
+            
+            // Company Section
+            if (data.company && Object.keys(data.company).length > 0) {
+                html += '<div class="coi-section"><h4>🏢 Company Information</h4>';
+                html += '<div class="coi-field">';
+                html += '<label>Company Name:</label>';
+                html += `<input type="text" id="coi-comp-name" value="${data.company.name || ''}">`;
+                html += '</div>';
+                html += '<div class="coi-field">';
+                html += '<label>Owner:</label>';
+                html += `<input type="text" id="coi-owner" value="${data.company.owner_name || ''}">`;
+                html += '</div>';
+                html += '<div class="coi-field">';
+                html += '<label>Phone:</label>';
+                html += `<input type="tel" id="coi-comp-phone" value="${data.company.phone || ''}">`;
+                html += '</div>';
+                html += '<div class="coi-field">';
+                html += '<label>Email:</label>';
+                html += `<input type="email" id="coi-comp-email" value="${data.company.email || ''}">`;
+                html += '</div>';
+                html += '<div class="coi-field">';
+                html += '<label>Address:</label>';
+                html += `<textarea id="coi-comp-address" rows="2">${data.company.address || ''}</textarea>`;
+                html += '</div>';
+                html += '</div>';
+            }
+            
+            // Driver Section
+            if (data.driver && Object.keys(data.driver).length > 0) {
+                html += '<div class="coi-section"><h4>👤 Driver Information</h4>';
+                html += '<div class="coi-field">';
+                html += '<label>First Name:</label>';
+                html += `<input type="text" id="coi-first" value="${data.driver.first_name || ''}">`;
+                html += '</div>';
+                html += '<div class="coi-field">';
+                html += '<label>Last Name:</label>';
+                html += `<input type="text" id="coi-last" value="${data.driver.last_name || ''}">`;
+                html += '</div>';
+                html += '<div class="coi-field">';
+                html += '<label>Phone:</label>';
+                html += `<input type="tel" id="coi-driver-phone" value="${data.driver.phone || ''}">`;
+                html += '</div>';
+                html += '<div class="coi-field">';
+                html += '<label>Email:</label>';
+                html += `<input type="email" id="coi-driver-email" value="${data.driver.email || ''}">`;
+                html += '</div>';
+                html += '<div class="coi-field">';
+                html += '<label>Address:</label>';
+                html += `<textarea id="coi-driver-address" rows="2">${data.driver.address || ''}</textarea>`;
+                html += '</div>';
+                html += '</div>';
+            }
+            
+            html += '<button class="autofill-btn" onclick="autoFillForms()">✨ Auto-Fill All Forms</button>';
+            html += '</div>';
+            
+            document.getElementById('coi-results').innerHTML = html;
+        }
+
+        async function autoFillForms() {
+            // Get company ID or create new company
+            let companies = await fetch('/api/companies').then(r => r.json());
+            let companyId = null;
+            const companyName = document.getElementById('coi-comp-name').value;
+            
+            if (companyName) {
+                const existing = companies.find(c => c.name === companyName);
+                if (existing) {
+                    companyId = existing.id;
+                } else {
+                    // Create new company
+                    const newComp = await fetch('/api/companies', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            name: document.getElementById('coi-comp-name').value,
+                            owner_name: document.getElementById('coi-owner').value,
+                            phone: document.getElementById('coi-comp-phone').value,
+                            email: document.getElementById('coi-comp-email').value,
+                            address: document.getElementById('coi-comp-address').value
+                        })
+                    }).then(r => r.json());
+                    companyId = newComp.id;
+                }
+            }
+            
+            // Add insurance if we have policy number and expiration
+            if (companyId && document.getElementById('coi-policy').value && document.getElementById('coi-exp').value) {
+                await fetch('/api/insurance', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        company_id: companyId,
+                        policy_number: document.getElementById('coi-policy').value,
+                        expiration_date: document.getElementById('coi-exp').value,
+                        coverage_type: document.getElementById('coi-coverage').value
+                    })
+                });
+            }
+            
+            // Add driver if we have first and last name
+            if (companyId && document.getElementById('coi-first').value && document.getElementById('coi-last').value) {
+                await fetch('/api/drivers', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        company_id: companyId,
+                        first_name: document.getElementById('coi-first').value,
+                        last_name: document.getElementById('coi-last').value,
+                        phone: document.getElementById('coi-driver-phone').value,
+                        email: document.getElementById('coi-driver-email').value,
+                        address: document.getElementById('coi-driver-address').value
+                    })
+                });
+            }
+            
+            alert('✅ All data has been auto-filled and saved! Check Companies, Drivers, and Insurance sections to verify.');
+            loadCompanies();
+            loadDrivers();
+            loadInsurance();
+        }
+
+        async function loadDashboard() {
+            const companies = await fetch('/api/companies').then(r => r.json());
+            const drivers = await fetch('/api/drivers').then(r => r.json());
+            const vehicles = await fetch('/api/vehicles').then(r => r.json());
+            const insurance = await fetch('/api/insurance').then(r => r.json());
+
+            let html = `<h3>Summary</h3><div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 20px;">`;
+            html += `<div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 8px; text-align: center;"><h3>${companies.length}</h3><p>Companies</p></div>`;
+            html += `<div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 8px; text-align: center;"><h3>${drivers.length}</h3><p>Drivers</p></div>`;
+            html += `<div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 8px; text-align: center;"><h3>${vehicles.length}</h3><p>Vehicles</p></div>`;
+            html += `<div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 8px; text-align: center;"><h3>${insurance.length}</h3><p>Insurance Policies</p></div>`;
+            html += `</div>`;
+
+            const dailyCheck = await fetch('/api/daily-check').then(r => r.json());
+            
+            html += `<h3 style="margin-top: 30px;">⚠️ Items Expiring in Next 30 Days</h3>`;
+            if (dailyCheck.drivers_licenses.length === 0 && dailyCheck.insurance.length === 0) {
+                html += `<p style="color: green;">✅ Everything is current!</p>`;
+            } else {
+                if (dailyCheck.drivers_licenses.length > 0) {
+                    html += `<div class="alert alert-danger"><strong>Driver Licenses:</strong><ul>`;
+                    dailyCheck.drivers_licenses.forEach(d => {
+                        html += `<li>${d.name} - Expires: ${new Date(d.expiration).toLocaleDateString()}</li>`;
+                    });
+                    html += `</ul></div>`;
+                }
+                if (dailyCheck.insurance.length > 0) {
+                    html += `<div class="alert alert-danger"><strong>Insurance:</strong><ul>`;
+                    dailyCheck.insurance.forEach(i => {
+                        html += `<li>${i.company} - Policy ${i.policy} - Expires: ${new Date(i.expiration).toLocaleDateString()}</li>`;
+                    });
+                    html += `</ul></div>`;
+                }
+            }
+
+            document.getElementById('dashboard-content').innerHTML = html;
+        }
+
+        async function loadCompanies() {
+            const response = await fetch('/api/companies');
+            const companies = await response.json();
+            
+            document.querySelectorAll('select').forEach(select => {
+                if (select.id.includes('company')) {
+                    const currentValue = select.value;
+                    select.innerHTML = '<option value="">Choose a company...</option>';
+                    companies.forEach(c => {
+                        select.innerHTML += `<option value="${c.id}">${c.name}</option>`;
+                    });
+                    select.value = currentValue;
+                }
+            });
+            
+            const tbody = document.querySelector('#companies-table tbody');
+            tbody.innerHTML = companies.map(c => `
+                <tr data-id="${c.id}">
+                    <td class="editable" data-field="name">${c.name}</td>
+                    <td class="editable" data-field="owner_name">${c.owner_name || ''}</td>
+                    <td class="editable" data-field="dot">${c.dot || ''}</td>
+                    <td class="editable" data-field="mc">${c.mc || ''}</td>
+                    <td class="editable" data-field="ein">${c.ein || ''}</td>
+                    <td class="editable" data-field="phone">${c.phone || ''}</td>
+                    <td class="editable" data-field="email">${c.email || ''}</td>
+                    <td class="editable" data-field="address" style="max-width: 150px; overflow: hidden; text-overflow: ellipsis;">${c.address || ''}</td>
+                    <td><button class="action-btn delete-btn" onclick="deleteCompany(${c.id})">Delete</button></td>
+                </tr>
+            `).join('');
+
+            makeEditable('#companies-table', 'PUT', '/api/companies');
+        }
+
+        async function addCompany(event) {
+            event.preventDefault();
+            const data = {
+                name: document.getElementById('company-name').value,
+                owner_name: document.getElementById('company-owner').value,
+                dot_number: document.getElementById('company-dot').value,
+                mc_number: document.getElementById('company-mc').value,
+                ein_number: document.getElementById('company-ein').value,
+                phone: document.getElementById('company-phone').value,
+                email: document.getElementById('company-email').value,
+                address: document.getElementById('company-address').value
+            };
+            
+            const response = await fetch('/api/companies', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            
+            if (response.ok) {
+                alert('Company added successfully!');
+                event.target.reset();
+                loadCompanies();
+            }
+        }
+
+        async function loadDrivers() {
+            const response = await fetch('/api/drivers');
+            const drivers = await response.json();
+            
+            const tbody = document.querySelector('#drivers-table tbody');
+            tbody.innerHTML = drivers.map(d => `
+                <tr data-id="${d.id}">
+                    <td class="editable" data-field="name">${d.name}</td>
+                    <td class="editable" data-field="license_number">${d.license_number || ''}</td>
+                    <td class="editable" data-field="license_expiration" data-type="date">${d.license_expiration ? new Date(d.license_expiration).toLocaleDateString() : ''}</td>
+                    <td class="editable" data-field="phone">${d.phone || ''}</td>
+                    <td class="editable" data-field="email">${d.email || ''}</td>
+                    <td class="editable" data-field="address" style="max-width: 150px; overflow: hidden;">${d.address || ''}</td>
+                    <td>${d.call_status}</td>
+                    <td>${d.call_expiration ? new Date(d.call_expiration).toLocaleDateString() : ''}</td>
+                    <td><button class="action-btn delete-btn" onclick="deleteDriver(${d.id})">Delete</button></td>
+                </tr>
+            `).join('');
+
+            makeEditable('#drivers-table', 'PUT', '/api/drivers');
+        }
+
+        async function addDriver(event) {
+            event.preventDefault();
+            const data = {
+                company_id: document.getElementById('driver-company').value,
+                first_name: document.getElementById('driver-first').value,
+                last_name: document.getElementById('driver-last').value,
+                license_number: document.getElementById('driver-license').value,
+                license_expiration: document.getElementById('driver-license-exp').value,
+                phone: document.getElementById('driver-phone').value,
+                email: document.getElementById('driver-email').value,
+                address: document.getElementById('driver-address').value,
+                personal_info: document.getElementById('driver-personal').value,
+                call_status: document.getElementById('driver-call-status').value,
+                call_expiration: document.getElementById('driver-call-exp').value
+            };
+            
+            const response = await fetch('/api/drivers', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            
+            if (response.ok) {
+                alert('Driver added successfully!');
+                event.target.reset();
+                loadDrivers();
+            }
+        }
+
+        async function loadVehicles() {
+            const response = await fetch('/api/vehicles');
+            const vehicles = await response.json();
+            
+            const tbody = document.querySelector('#vehicles-table tbody');
+            tbody.innerHTML = vehicles.map(v => `
+                <tr data-id="${v.id}">
+                    <td class="editable" data-field="vin_number">${v.vin_number}</td>
+                    <td class="editable" data-field="license_plate">${v.license_plate || ''}</td>
+                    <td class="editable" data-field="vehicle_type">${v.vehicle_type || ''}</td>
+                    <td><button class="action-btn delete-btn" onclick="deleteVehicle(${v.id})">Delete</button></td>
+                </tr>
+            `).join('');
+
+            makeEditable('#vehicles-table', 'PUT', '/api/vehicles');
+        }
+
+        async function addVehicle(event) {
+            event.preventDefault();
+            const data = {
+                company_id: document.getElementById('vehicle-company').value,
+                vin_number: document.getElementById('vehicle-vin').value,
+                license_plate: document.getElementById('vehicle-plate').value,
+                vehicle_type: document.getElementById('vehicle-type').value
+            };
+            
+            const response = await fetch('/api/vehicles', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            
+            if (response.ok) {
+                alert('Vehicle added successfully!');
+                event.target.reset();
+                loadVehicles();
+            }
+        }
+
+        async function loadInsurance() {
+            const response = await fetch('/api/insurance');
+            const insurances = await response.json();
+            
+            const tbody = document.querySelector('#insurance-table tbody');
+            tbody.innerHTML = insurances.map(i => {
+                const expDate = new Date(i.expiration_date);
+                const today = new Date();
+                let status = '';
+                
+                if (expDate < today) {
+                    status = '<span style="color: #dc3545; font-weight: bold;">EXPIRED</span>';
+                } else if (expDate < new Date(today.getTime() + 30*24*60*60*1000)) {
+                    status = '<span style="color: #ffc107; font-weight: bold;">EXPIRING SOON</span>';
+                } else {
+                    status = '<span style="color: #28a745; font-weight: bold;">CURRENT</span>';
+                }
+                
+                return `
+                    <tr>
+                        <td>Company</td>
+                        <td>${i.policy_number}</td>
+                        <td>${i.coverage_type || ''}</td>
+                        <td>${expDate.toLocaleDateString()}</td>
+                        <td>${status}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        async function addInsurance(event) {
+            event.preventDefault();
+            const data = {
+                company_id: document.getElementById('insurance-company').value,
+                policy_number: document.getElementById('insurance-policy').value,
+                coverage_type: document.getElementById('insurance-type').value,
+                expiration_date: document.getElementById('insurance-exp').value
+            };
+            
+            const response = await fetch('/api/insurance', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            
+            if (response.ok) {
+                alert('Insurance policy added successfully!');
+                event.target.reset();
+                loadInsurance();
+            }
+        }
+
+        async function uploadDocument(event) {
+            event.preventDefault();
+            
+            const formData = new FormData();
+            formData.append('file', document.getElementById('doc-file').files[0]);
+            formData.append('document_type', document.getElementById('doc-type').value);
+            
+            const relatedType = document.getElementById('doc-related-type').value;
+            const relatedId = document.getElementById('doc-related-id').value;
+            
+            if (relatedType === 'company') formData.append('company_id', relatedId);
+            if (relatedType === 'driver') formData.append('driver_id', relatedId);
+            if (relatedType === 'vehicle') formData.append('vehicle_id', relatedId);
+            
+            const response = await fetch('/api/upload', {
+                method: 'POST',
+                body: formData
+            });
+            
+            if (response.ok) {
+                alert('Document uploaded successfully!');
+                event.target.reset();
+                loadDocumentsList();
+            }
+        }
+
+        async function loadDocumentsList() {
+            const response = await fetch('/api/documents');
+            const documents = await response.json();
+            
+            const tbody = document.querySelector('#documents-table tbody');
+            tbody.innerHTML = documents.map(d => `
+                <tr>
+                    <td>${d.document_type}</td>
+                    <td><a href="/${d.file_path}" target="_blank">📄 View PDF</a></td>
+                    <td>${new Date(d.uploaded_at).toLocaleDateString()}</td>
+                </tr>
+            `).join('');
+        }
+
+        async function updateDocDropdown() {
+            const relatedType = document.getElementById('doc-related-type').value;
+            const relatedId = document.getElementById('doc-related-id');
+            
+            let url = '';
+            if (relatedType === 'company') url = '/api/companies';
+            if (relatedType === 'driver') url = '/api/drivers';
+            if (relatedType === 'vehicle') url = '/api/vehicles';
+            
+            const response = await fetch(url);
+            const items = await response.json();
+            
+            relatedId.innerHTML = '';
+            items.forEach(item => {
+                const label = item.name || item.first_name + ' ' + item.last_name || item.vin_number;
+                relatedId.innerHTML += `<option value="${item.id}">${label}</option>`;
+            });
+        }
+
+        function makeEditable(tableSelector, method, endpoint) {
+            document.querySelectorAll(tableSelector + ' .editable').forEach(cell => {
+                cell.addEventListener('click', function(e) {
+                    if (this.querySelector('input')) return;
+                    
+                    const originalValue = this.textContent;
+                    const fieldName = this.dataset.field;
+                    const fieldType = this.dataset.type || 'text';
+                    
+                    const input = document.createElement('input');
+                    input.type = fieldType === 'date' ? 'date' : 'text';
+                    input.className = 'edit-input';
+                    input.value = originalValue;
+                    
+                    this.textContent = '';
+                    this.appendChild(input);
+                    input.focus();
+                    
+                    const row = this.closest('tr');
+                    const rowId = row.dataset.id;
+                    
+                    const saveCell = (newValue) => {
+                        if (newValue !== originalValue) {
+                            const updateData = {
+                                id: rowId,
+                                [fieldName]: newValue
+                            };
+                            
+                            fetch(endpoint, {
+                                method: method,
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify(updateData)
+                            }).then(r => r.json()).then(data => {
+                                if (data.success) {
+                                    this.textContent = newValue;
+                                }
+                            });
+                        } else {
+                            this.textContent = originalValue;
+                        }
+                    };
+                    
+                    input.addEventListener('blur', () => saveCell(input.value));
+                    input.addEventListener('keypress', (e) => {
+                        if (e.key === 'Enter') saveCell(input.value);
+                    });
+                });
+            });
+        }
+
+        async function deleteCompany(id) {
+            if (confirm('Are you sure?')) {
+                alert('Delete coming soon');
+            }
+        }
+
+        async function deleteDriver(id) {
+            if (confirm('Are you sure?')) {
+                alert('Delete coming soon');
+            }
+        }
+
+        async function deleteVehicle(id) {
+            if (confirm('Are you sure?')) {
+                alert('Delete coming soon');
+            }
+        }
+
+        async function generateWeeklyReport() {
+            const response = await fetch('/api/weekly-report');
+            const report = await response.json();
+            
+            let html = `<div class="alert alert-success"><strong>Report Generated:</strong> ${new Date(report.generated_at).toLocaleString()}</div>`;
+            
+            html += `<h3 style="color: #667eea; margin: 20px 0 10px 0;">📊 Summary</h3>`;
+            html += `<table><tr><td><strong>Total Companies:</strong></td><td>${report.summary.total_companies}</td></tr>`;
+            html += `<tr><td><strong>Total Drivers:</strong></td><td>${report.summary.total_drivers}</td></tr>`;
+            html += `<tr><td><strong>Total Vehicles:</strong></td><td>${report.summary.total_vehicles}</td></tr>`;
+            html += `<tr><td><strong>Total Insurance Policies:</strong></td><td>${report.summary.total_insurance_policies}</td></tr></table>`;
+            
+            if (report.expiring_soon.drivers_licenses.length > 0) {
+                html += `<h3 style="color: #ffc107; margin: 20px 0 10px 0;">⚠️ Driver Licenses Expiring Soon</h3>`;
+                html += `<table><thead><tr><th>Driver</th><th>Expiration</th></tr></thead><tbody>`;
+                report.expiring_soon.drivers_licenses.forEach(d => {
+                    html += `<tr><td>${d.name}</td><td>${new Date(d.expiration).toLocaleDateString()}</td></tr>`;
+                });
+                html += `</tbody></table>`;
+            }
+            
+            if (report.expiring_soon.insurance.length > 0) {
+                html += `<h3 style="color: #ffc107; margin: 20px 0 10px 0;">⚠️ Insurance Expiring Soon</h3>`;
+                html += `<table><thead><tr><th>Company</th><th>Policy</th><th>Expiration</th></tr></thead><tbody>`;
+                report.expiring_soon.insurance.forEach(i => {
+                    html += `<tr><td>${i.company}</td><td>${i.policy}</td><td>${new Date(i.expiration).toLocaleDateString()}</td></tr>`;
+                });
+                html += `</tbody></table>`;
+            }
+            
+            document.getElementById('report-content').innerHTML = html;
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadDashboard();
+        });
+    </script>
+</body>
+</html>
